@@ -25,6 +25,11 @@ public class ClipServerService extends Service {
         public boolean play(int songIndex) {
             Log.i(TAG, "songIndex is" + songIndex);
             if(songIndex > 0 && songIndex < musicList.length){
+                // Stop playback is another song is already playing
+                if (null != mPlayer) {
+                    mPlayer.stop();
+                }
+
                 mPlayer = MediaPlayer.create(getBaseContext(), musicList[songIndex - 1]);
                 mPlayer.start();
                 return true;
@@ -92,6 +97,19 @@ public class ClipServerService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        super.onUnbind(intent);
+
+        if (null != mPlayer) {
+
+            mPlayer.stop();
+            mPlayer.release();
+
+        }
+        return true;
     }
 
     @Override
