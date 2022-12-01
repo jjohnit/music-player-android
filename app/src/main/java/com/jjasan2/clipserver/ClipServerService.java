@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -112,7 +113,6 @@ public class ClipServerService extends Service {
 
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-
                     // un bind from the client when the playback stops
                     stopSelf(mStartID);
                 }
@@ -143,38 +143,32 @@ public class ClipServerService extends Service {
         Log.i(TAG, "onStartCommand: ");
         super.onStartCommand(intent, flags, startId);
         mStartID = startId;
+        startForeground(1, notification);
         return START_NOT_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i(TAG, "onBind: ");
         return mBinder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i(TAG, "onUnbind: ");
         super.onUnbind(intent);
 
         if (null != mPlayer) {
-
             mPlayer.stop();
-
         }
         return true;
     }
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "onDestroy: ");
         super.onDestroy();
 
         if (null != mPlayer) {
-
             mPlayer.stop();
             mPlayer.release();
-
         }
 
         Log.i(TAG, "Service destroyed");
